@@ -38,3 +38,13 @@ sample5 :: ref: 1849554 optimized: 1569194 diff: -280360 (15%)
 sample6 :: ref: 2090182 optimized: 1772572 diff: -317610 (15%)
 sample7 :: ref: 2463324 optimized: 2088234 diff: -375090 (15%)
 sample8 :: ref: 2813632 optimized: 2429462 diff: -384170 (13%)
+
+// harcode generators in polymod
+sample1 :: ref: 2813632 optimized: 1632394 diff: -1181238 (41%)
+sample2 :: ref: 2047542 optimized: 1168918 diff: -878624 (42%)
+sample3 :: ref: 2288170 optimized: 1308760 diff: -979410 (42%)
+sample4 :: ref: 1674400 optimized: 948560 diff: -725840 (43%)
+sample5 :: ref: 1849554 optimized: 1056438 diff: -793116 (42%)
+sample6 :: ref: 2090182 optimized: 1196280 diff: -893902 (42%)
+sample7 :: ref: 2463324 optimized: 1416638 diff: -1046686 (42%)
+sample8 :: ref: 2813632 optimized: 1632394 diff: -1181238 (41%)

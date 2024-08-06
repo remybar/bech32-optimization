@@ -8,39 +8,28 @@ const alphabet: [u8; 32] = [
     'c', 'e', '6', 'm', 'u', 'a', '7', 'l'
 ];
 
-//! bech32 encoding implementation
-//! Spec: https://github.com/bitcoin/bips/blob/master/bip-0173.mediawiki
-//! Sample implementations:
-//! https://github.com/sipa/bech32/blob/master/ref/javascript/bech32.js#L86
-//! https://github.com/paulmillr/scure-base/blob/main/index.ts#L479
-
-// const GENERATOR: [
-//     felt252
-//     ; 5] = [
-//     1, 2, 3, 4
-//     ];
-
 fn polymod(values: Array<u8>) -> u32 {
-    let generator = array![
-        0x3b6a57b2_u32, 0x26508e6d_u32, 0x1ea119fa_u32, 0x3d4233dd_u32, 0x2a1462b3_u32
-    ];
-    let generator = generator.span();
-
     let mut chk = 1_u32;
 
-    let len = values.len();
-    let mut p: usize = 0;
-    while p != len {
+    for x in values {
         let top = shr(chk, 25);
-        chk = shl((chk & 0x1ffffff_u32), 5) ^ (*values.at(p)).into();
-        let mut i = 0_usize;
-        while i != 5 {
-            if shr(top, i) & 1_u32 != 0 {
-                chk = chk ^ *generator.at(i.into());
-            }
-            i += 1;
-        };
-        p += 1;
+        chk = shl((chk & 0x1ffffff_u32), 5) ^ x.into();
+
+        if shr(top, 0) & 1_u32 != 0 {
+            chk = chk ^ 0x3b6a57b2_u32;
+        }
+        if shr(top, 1) & 1_u32 != 0 {
+            chk = chk ^ 0x26508e6d_u32;
+        }
+        if shr(top, 2) & 1_u32 != 0 {
+            chk = chk ^ 0x1ea119fa_u32;
+        }
+        if shr(top, 3) & 1_u32 != 0 {
+            chk = chk ^ 0x3d4233dd_u32;
+        }
+        if shr(top, 4) & 1_u32 != 0 {
+            chk = chk ^ 0x2a1462b3_u32;
+        }
     };
 
     chk
