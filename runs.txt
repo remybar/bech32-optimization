@@ -18,3 +18,13 @@ sample5 :: ref: 1849554 optimized: 1714074 diff: -135480 (7%)
 sample6 :: ref: 2090182 optimized: 1923072 diff: -167110 (7%)
 sample7 :: ref: 2463324 optimized: 2247164 diff: -216160 (8%)
 sample8 :: ref: 2813632 optimized: 2597472 diff: -216160 (7%)
+
+// - checksum optimization + use for/loop in encode
+sample1 :: ref: 2813632 optimized: 2531702 diff: -281930 (10%)
+sample2 :: ref: 2047542 optimized: 1812742 diff: -234800 (11%)
+sample3 :: ref: 2288170 optimized: 2019860 diff: -268310 (11%)
+sample4 :: ref: 1674400 optimized: 1491470 diff: -182930 (10%)
+sample5 :: ref: 1849554 optimized: 1662084 diff: -187470 (10%)
+sample6 :: ref: 2090182 optimized: 1869202 diff: -220980 (10%)
+sample7 :: ref: 2463324 optimized: 2190474 diff: -272850 (11%)
+sample8 :: ref: 2813632 optimized: 2531702 diff: -281930 (10%)

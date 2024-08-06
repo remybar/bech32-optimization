@@ -55,7 +55,6 @@ fn hrp_expand(hrp: @Array<u8>, ref values: Array<u8>) {
     };
     values.append(0);
 
-    let len = hrp.len();
     let mut i = 0;
     while i != len {
         values.append(*hrp.at(i) & 31);
@@ -182,11 +181,8 @@ pub fn encode(hrp: @ByteArray, data: @ByteArray, limit: usize) -> ByteArray {
     combined.append_span(cs.span());
 
     let mut encoded: ByteArray = Default::default();
-    let mut i = 0;
-    let len = combined.len();
-    while i != len {
-        encoded.append_byte(*alphabet[((*combined.at(i)).into())]);
-        i += 1;
+    for x in combined {
+        encoded.append_byte(*alphabet[x.into()]);
     };
 
     format!("{hrp}1{encoded}")
