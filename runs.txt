@@ -1,0 +1,20 @@
+
+// - use const alphabet
+sample1 :: ref: 2813632 optimized: 2614492 diff: -199140 (7%)
+sample2 :: ref: 2047542 optimized: 1876822 diff: -170720 (8%)
+sample3 :: ref: 2288170 optimized: 2089030 diff: -199140 (8%)
+sample4 :: ref: 1674400 optimized: 1546310 diff: -128090 (7%)
+sample5 :: ref: 1849554 optimized: 1721464 diff: -128090 (6%)
+sample6 :: ref: 2090182 optimized: 1933672 diff: -156510 (7%)
+sample7 :: ref: 2463324 optimized: 2264184 diff: -199140 (8%)
+sample8 :: ref: 2813632 optimized: 2614492 diff: -199140 (7%)
+
+// - direct conversion from ByteArray to 5-bits chunks
+sample1 :: ref: 2813632 optimized: 2597472 diff: -216160 (7%)
+sample2 :: ref: 2047542 optimized: 1863012 diff: -184530 (9%)
+sample3 :: ref: 2288170 optimized: 2072010 diff: -216160 (9%)
+sample4 :: ref: 1674400 optimized: 1538920 diff: -135480 (8%)
+sample5 :: ref: 1849554 optimized: 1714074 diff: -135480 (7%)
+sample6 :: ref: 2090182 optimized: 1923072 diff: -167110 (7%)
+sample7 :: ref: 2463324 optimized: 2247164 diff: -216160 (8%)
+sample8 :: ref: 2813632 optimized: 2597472 diff: -216160 (7%)

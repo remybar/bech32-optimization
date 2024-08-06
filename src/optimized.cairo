@@ -115,6 +115,41 @@ impl ByteArrayTraitIntoArray of Into<@ByteArray, Array<u8>> {
     }
 }
 
+fn convert_ba_to_5bit_chunks(data: @ByteArray) -> Array<u8> {
+    let mut r = ArrayTrait::new();
+
+    let len = data.len();
+    let mut i = 0;
+
+    let mut acc = 0_u8;
+    let mut missing_bits = 5_u8;
+
+    while i != len {
+        let mut byte: u8 = data[i];
+        let mut bits_left = 8_u8;
+        loop {
+            let chunk_size = min(missing_bits, bits_left);
+            let chunk = shr(byte, 8 - chunk_size);
+            r.append(acc + chunk);
+            byte = shl(byte, chunk_size);
+            bits_left -= chunk_size;
+            if bits_left < 5 {
+                acc = shr(byte, 3);
+                missing_bits = 5 - bits_left;
+                break ();
+            } else {
+                acc = 0;
+                missing_bits = 5
+            }
+        };
+        i += 1;
+    };
+    if missing_bits < 5 {
+        r.append(acc);
+    }
+    r
+}
+
 fn checksum(hrp: @ByteArray, data: @Array<u8>) -> Array<u8> {
     let mut values = ArrayTrait::new();
 
@@ -138,7 +173,7 @@ fn checksum(hrp: @ByteArray, data: @Array<u8>) -> Array<u8> {
 
 pub fn encode(hrp: @ByteArray, data: @ByteArray, limit: usize) -> ByteArray {
     let alphabet = alphabet.span();
-    let data_5bits = convert_bytes_to_5bit_chunks(@data.into());
+    let data_5bits = convert_ba_to_5bit_chunks(data);
 
     let cs = checksum(hrp, @data_5bits);
 
