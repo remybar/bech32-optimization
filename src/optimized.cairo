@@ -12,22 +12,22 @@ fn polymod(values: Array<u8>) -> u32 {
     let mut chk = 1_u32;
 
     for x in values {
-        let top = shr(chk, 25);
+        let top = chk;
         chk = shl((chk & 0x1ffffff_u32), 5) ^ x.into();
 
-        if shr(top, 0) & 1_u32 != 0 {
+        if top & 33554432_u32 != 0 {        // bit 25
             chk = chk ^ 0x3b6a57b2_u32;
         }
-        if shr(top, 1) & 1_u32 != 0 {
+        if top & 67108864_u32 != 0 {        // bit 26
             chk = chk ^ 0x26508e6d_u32;
         }
-        if shr(top, 2) & 1_u32 != 0 {
+        if top & 134217728_u32 != 0 {       // bit 27
             chk = chk ^ 0x1ea119fa_u32;
         }
-        if shr(top, 3) & 1_u32 != 0 {
+        if top & 268435456_u32 != 0 {       // bit 28
             chk = chk ^ 0x3d4233dd_u32;
         }
-        if shr(top, 4) & 1_u32 != 0 {
+        if top & 536870912_u32 != 0 {       // bit 29
             chk = chk ^ 0x2a1462b3_u32;
         }
     };

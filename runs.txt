@@ -48,3 +48,13 @@ sample5 :: ref: 1849554 optimized: 1056438 diff: -793116 (42%)
 sample6 :: ref: 2090182 optimized: 1196280 diff: -893902 (42%)
 sample7 :: ref: 2463324 optimized: 1416638 diff: -1046686 (42%)
 sample8 :: ref: 2813632 optimized: 1632394 diff: -1181238 (41%)
+
+// avoid shr in polymod
+sample1 :: ref: 2813632 optimized: 1198304 diff: -1615328 (57%)
+sample2 :: ref: 2047542 optimized: 863388 diff: -1184154 (57%)
+sample3 :: ref: 2288170 optimized: 971090 diff: -1317080 (57%)
+sample4 :: ref: 1674400 optimized: 691240 diff: -983160 (58%)
+sample5 :: ref: 1849554 optimized: 766978 diff: -1082576 (58%)
+sample6 :: ref: 2090182 optimized: 874680 diff: -1215502 (58%)
+sample7 :: ref: 2463324 optimized: 1046828 diff: -1416496 (57%)
+sample8 :: ref: 2813632 optimized: 1198304 diff: -1615328 (57%)
