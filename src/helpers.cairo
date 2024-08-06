@@ -1,6 +1,5 @@
 use core::array::ArrayTrait;
 use core::byte_array::ByteArrayTrait;
-use core::integer::{u32_wide_mul, u8_wide_mul, BoundedInt};
 use core::array::ToSpanTrait;
 use core::option::OptionTrait;
 use core::to_byte_array::FormatAsByteArray;
@@ -80,13 +79,13 @@ trait WideMul<V, W> {
 
 impl WideMuluU32 of WideMul<u32, u64> {
     fn wide_mul(x: u32, y: u32) -> u64 {
-        u32_wide_mul(x, y)
+        core::num::traits::WideMul::wide_mul(x, y)
     }
 }
 
 impl WideMuluU8 of WideMul<u8, u16> {
     fn wide_mul(x: u8, y: u8) -> u16 {
-        u8_wide_mul(x, y)
+        core::num::traits::WideMul::wide_mul(x, y)
     }
 }
 
@@ -97,7 +96,7 @@ pub fn shl<
     N,
     +BitAnd<W>,
     +Pow2<V, N>,
-    +BoundedInt<V>,
+    +core::num::traits::Bounded<V>,
     +WideMul<V, W>,
     +Into<V, W>,
     +TryInto<W, V>,
@@ -106,5 +105,5 @@ pub fn shl<
 >(
     x: V, n: N
 ) -> V {
-    (WideMul::wide_mul(x, Pow2::pow2(n)) & BoundedInt::<V>::max().into()).try_into().unwrap()
+    (WideMul::wide_mul(x, Pow2::pow2(n)) & core::num::traits::Bounded::<V>::MAX.into()).try_into().unwrap()
 }
