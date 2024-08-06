@@ -97,7 +97,7 @@ fn convert_bytes_to_5bit_chunks(bytes: @Array<u8>) -> Array<u8> {
     r
 }
 
-fn convert_ba_to_bytes(data: @ByteArray) -> Array<u8> {
+fn convert_bytearray_to_bytes(data: @ByteArray) -> Array<u8> {
     let mut r = ArrayTrait::new();
     let len = data.len();
     let mut i = 0;
@@ -108,7 +108,7 @@ fn convert_ba_to_bytes(data: @ByteArray) -> Array<u8> {
     r
 }
 
-fn convert_ba_to_5bit_chunks(data: @ByteArray) -> Array<u8> {
+fn convert_bytearray_to_5bit_chunks(data: @ByteArray) -> Array<u8> {
     let mut r = ArrayTrait::new();
 
     let len = data.len();
@@ -171,19 +171,19 @@ fn checksum(hrp: @Array<u8>, data: @Array<u8>) -> Array<u8> {
 
 pub fn encode(hrp: @ByteArray, data: @ByteArray, limit: usize) -> ByteArray {
     let alphabet = alphabet.span();
-    let data_5bits = convert_ba_to_5bit_chunks(data);
-    let hrp_in_bytes = convert_ba_to_bytes(hrp);
+    let data_5bits = convert_bytearray_to_5bit_chunks(data);
+    let hrp_bytes = convert_bytearray_to_bytes(hrp);
 
-    let cs = checksum(@hrp_in_bytes, @data_5bits);
+    let cs = checksum(@hrp_bytes, @data_5bits);
 
-    let mut combined = ArrayTrait::new();
-    combined.append_span(data_5bits.span());
-    combined.append_span(cs.span());
-
-    let mut encoded: ByteArray = Default::default();
-    for x in combined {
+    let mut encoded: ByteArray = hrp.clone();
+    encoded.append_byte('1');    
+    for x in data_5bits {
+        encoded.append_byte(*alphabet[x.into()]);
+    };
+    for x in cs {
         encoded.append_byte(*alphabet[x.into()]);
     };
 
-    format!("{hrp}1{encoded}")
+    encoded
 }

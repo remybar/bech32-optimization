@@ -28,3 +28,13 @@ sample5 :: ref: 1849554 optimized: 1662084 diff: -187470 (10%)
 sample6 :: ref: 2090182 optimized: 1869202 diff: -220980 (10%)
 sample7 :: ref: 2463324 optimized: 2190474 diff: -272850 (11%)
 sample8 :: ref: 2813632 optimized: 2531702 diff: -281930 (10%)
+
+// avoid creating temporary arrays in encode
+sample1 :: ref: 2813632 optimized: 2429462 diff: -384170 (13%)
+sample2 :: ref: 2047542 optimized: 1714242 diff: -333300 (16%)
+sample3 :: ref: 2288170 optimized: 1917620 diff: -370550 (16%)
+sample4 :: ref: 1674400 optimized: 1398580 diff: -275820 (16%)
+sample5 :: ref: 1849554 optimized: 1569194 diff: -280360 (15%)
+sample6 :: ref: 2090182 optimized: 1772572 diff: -317610 (15%)
+sample7 :: ref: 2463324 optimized: 2088234 diff: -375090 (15%)
+sample8 :: ref: 2813632 optimized: 2429462 diff: -384170 (13%)
