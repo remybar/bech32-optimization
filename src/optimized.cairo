@@ -46,25 +46,21 @@ fn polymod(values: Array<u8>) -> u32 {
     chk
 }
 
-fn hrp_expand(hrp: @Array<u8>) -> Array<u8> {
-    let mut r: Array<u8> = ArrayTrait::new();
+fn hrp_expand(hrp: @Array<u8>, ref values: Array<u8>) {
+    let len = hrp.len();
+    let mut i = 0;
+    while i != len {
+        values.append(shr(*hrp.at(i), 5));
+        i += 1;
+    };
+    values.append(0);
 
     let len = hrp.len();
     let mut i = 0;
     while i != len {
-        r.append(shr(*hrp.at(i), 5));
+        values.append(*hrp.at(i) & 31);
         i += 1;
     };
-    r.append(0);
-
-    let len = hrp.len();
-    let mut i = 0;
-    while i != len {
-        r.append(*hrp.at(i) & 31);
-        i += 1;
-    };
-
-    r
 }
 
 fn convert_bytes_to_5bit_chunks(bytes: @Array<u8>) -> Array<u8> {
@@ -102,17 +98,15 @@ fn convert_bytes_to_5bit_chunks(bytes: @Array<u8>) -> Array<u8> {
     r
 }
 
-impl ByteArrayTraitIntoArray of Into<@ByteArray, Array<u8>> {
-    fn into(self: @ByteArray) -> Array<u8> {
-        let mut r = ArrayTrait::new();
-        let len = self.len();
-        let mut i = 0;
-        while i != len {
-            r.append(self.at(i).unwrap());
-            i += 1;
-        };
-        r
-    }
+fn convert_ba_to_bytes(data: @ByteArray) -> Array<u8> {
+    let mut r = ArrayTrait::new();
+    let len = data.len();
+    let mut i = 0;
+    while i != len {
+        r.append(data[i]);
+        i += 1;
+    };
+    r
 }
 
 fn convert_ba_to_5bit_chunks(data: @ByteArray) -> Array<u8> {
@@ -150,13 +144,18 @@ fn convert_ba_to_5bit_chunks(data: @ByteArray) -> Array<u8> {
     r
 }
 
-fn checksum(hrp: @ByteArray, data: @Array<u8>) -> Array<u8> {
+fn checksum(hrp: @Array<u8>, data: @Array<u8>) -> Array<u8> {
     let mut values = ArrayTrait::new();
 
-    values.append_span(hrp_expand(@hrp.into()).span());
+    hrp_expand(hrp, ref values);
     values.append_span(data.span());
-    let the_data: Array<u8> = array![0, 0, 0, 0, 0, 0];
-    values.append_span(the_data.span());
+
+    values.append(0);
+    values.append(0);
+    values.append(0);
+    values.append(0);
+    values.append(0);
+    values.append(0);
 
     let m = polymod(values) ^ 1;
 
@@ -174,8 +173,9 @@ fn checksum(hrp: @ByteArray, data: @Array<u8>) -> Array<u8> {
 pub fn encode(hrp: @ByteArray, data: @ByteArray, limit: usize) -> ByteArray {
     let alphabet = alphabet.span();
     let data_5bits = convert_ba_to_5bit_chunks(data);
+    let hrp_in_bytes = convert_ba_to_bytes(hrp);
 
-    let cs = checksum(hrp, @data_5bits);
+    let cs = checksum(@hrp_in_bytes, @data_5bits);
 
     let mut combined = ArrayTrait::new();
     combined.append_span(data_5bits.span());
