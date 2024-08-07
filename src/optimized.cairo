@@ -8,51 +8,30 @@ const alphabet: [u8; 32] = [
     'c', 'e', '6', 'm', 'u', 'a', '7', 'l'
 ];
 
-fn polymod(values: Array<u8>) -> u32 {
-    let mut chk = 1_u32;
+#[inline(always)]
+fn polymod(ref chk: u32, value: u8) {
+    let top = chk;
+    chk = shl((chk & 0x1ffffff_u32), 5) ^ value.into();
 
-    for x in values {
-        let top = chk;
-        chk = shl((chk & 0x1ffffff_u32), 5) ^ x.into();
-
-        if top & 33554432_u32 != 0 {        // bit 25
-            chk = chk ^ 0x3b6a57b2_u32;
-        }
-        if top & 67108864_u32 != 0 {        // bit 26
-            chk = chk ^ 0x26508e6d_u32;
-        }
-        if top & 134217728_u32 != 0 {       // bit 27
-            chk = chk ^ 0x1ea119fa_u32;
-        }
-        if top & 268435456_u32 != 0 {       // bit 28
-            chk = chk ^ 0x3d4233dd_u32;
-        }
-        if top & 536870912_u32 != 0 {       // bit 29
-            chk = chk ^ 0x2a1462b3_u32;
-        }
-    };
-
-    chk
-}
-
-fn hrp_expand(hrp: @Array<u8>, ref values: Array<u8>) {
-    let len = hrp.len();
-    let mut i = 0;
-    while i != len {
-        values.append(shr(*hrp.at(i), 5));
-        i += 1;
-    };
-    values.append(0);
-
-    let mut i = 0;
-    while i != len {
-        values.append(*hrp.at(i) & 31);
-        i += 1;
-    };
+    if top & 33554432_u32 != 0 {        // bit 25
+        chk = chk ^ 0x3b6a57b2_u32;
+    }
+    if top & 67108864_u32 != 0 {        // bit 26
+        chk = chk ^ 0x26508e6d_u32;
+    }
+    if top & 134217728_u32 != 0 {       // bit 27
+        chk = chk ^ 0x1ea119fa_u32;
+    }
+    if top & 268435456_u32 != 0 {       // bit 28
+        chk = chk ^ 0x3d4233dd_u32;
+    }
+    if top & 536870912_u32 != 0 {       // bit 29
+        chk = chk ^ 0x2a1462b3_u32;
+    }
 }
 
 fn convert_bytearray_to_bytes(data: @ByteArray) -> Array<u8> {
-    let mut r = ArrayTrait::new();
+    let mut r: Array<u8> = ArrayTrait::new();
     let len = data.len();
     let mut i = 0;
     while i != len {
@@ -97,28 +76,37 @@ fn convert_bytearray_to_5bit_chunks(data: @ByteArray) -> Array<u8> {
     r
 }
 
-fn checksum(hrp: @Array<u8>, data: @Array<u8>) -> Array<u8> {
-    let mut values = ArrayTrait::new();
+fn checksum(hrp: Array<u8>, data: @Array<u8>) -> Array<u32> {
+    let mut chk = 1_u32;
 
-    hrp_expand(hrp, ref values);
-    values.append_span(data.span());
+    for x in hrp.span() {
+        polymod(ref chk, shr(*x, 5));
+    };
+    polymod(ref chk, 0);
+    for x in hrp {
+        polymod(ref chk, x & 31);
+    };
 
-    values.append(0);
-    values.append(0);
-    values.append(0);
-    values.append(0);
-    values.append(0);
-    values.append(0);
+    for x in data.span() {
+        polymod(ref chk, *x);
+    };
 
-    let m = polymod(values) ^ 1;
+    polymod(ref chk, 0);
+    polymod(ref chk, 0);
+    polymod(ref chk, 0);
+    polymod(ref chk, 0);
+    polymod(ref chk, 0);
+    polymod(ref chk, 0);
+    
+    chk = chk ^ 1;
 
     let mut r = ArrayTrait::new();
-    r.append((shr(m, 25) & 31).try_into().unwrap());
-    r.append((shr(m, 20) & 31).try_into().unwrap());
-    r.append((shr(m, 15) & 31).try_into().unwrap());
-    r.append((shr(m, 10) & 31).try_into().unwrap());
-    r.append((shr(m, 5) & 31).try_into().unwrap());
-    r.append((m & 31).try_into().unwrap());
+    r.append(shr(chk, 25) & 31);
+    r.append(shr(chk, 20) & 31);
+    r.append(shr(chk, 15) & 31);
+    r.append(shr(chk, 10) & 31);
+    r.append(shr(chk, 5) & 31);
+    r.append(chk & 31);
 
     r
 }
@@ -128,7 +116,7 @@ pub fn encode(hrp: @ByteArray, data: @ByteArray, limit: usize) -> ByteArray {
     let data_5bits = convert_bytearray_to_5bit_chunks(data);
     let hrp_bytes = convert_bytearray_to_bytes(hrp);
 
-    let cs = checksum(@hrp_bytes, @data_5bits);
+    let cs = checksum(hrp_bytes, @data_5bits);
 
     let mut encoded: ByteArray = hrp.clone();
     encoded.append_byte('1');    
@@ -136,7 +124,7 @@ pub fn encode(hrp: @ByteArray, data: @ByteArray, limit: usize) -> ByteArray {
         encoded.append_byte(*alphabet[x.into()]);
     };
     for x in cs {
-        encoded.append_byte(*alphabet[x.into()]);
+        encoded.append_byte(*alphabet[x]);
     };
 
     encoded
